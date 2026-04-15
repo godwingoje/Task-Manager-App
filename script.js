@@ -128,14 +128,19 @@ function renderTasks() {
           <div class="edit-form-top">
             <div class="edit-form-main">
               <div class="edit-form-heading">
-                <input
+               <label class="edit-field"> 
+               <span>Change title</span>
+               <input
                   id="edit-title-${task.id}"
                   type="text"
                   data-testid="test-todo-edit-title-input"
                   
                   placeholder="Enter task title"
                 />
-                <select
+               </label>
+                <label className="edit-field">
+                  <span>Change priority</span>
+                  <select
                   id="edit-priority-${task.id}"
                   data-testid="test-todo-edit-priority-select"
                 >
@@ -144,20 +149,26 @@ function renderTasks() {
                   <option value="High"></option>
                   Set Priority
                 </select>
+                </label>
               </div>
-              <textarea
+             <label className="edit-field">
+               <textarea
                 id="edit-description-text-area-${task.id}"
                 data-testid="test-todo-edit-description-input"
                 placeholder="Enter text description"
               ></textarea>
+             </label>
             </div>
             <div class="edit-form-date">
-            <input
+            <label>
+              <span>Change due date</span>
+              <input
               type="datetime-local"
               id="edit-due-date-${task.id}"
               data-testid="test-todo-edit-due-date-input"
               placeholder="Enter due date"
             />
+            </label>
             </div>
           </div>
 
