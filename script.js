@@ -13,7 +13,7 @@ const tasks = [
     id: 2,
     tag: "Urgent",
     title: "Submit assignment",
-    status: "Completed",
+    status: "Done",
     priority: "Medium",
     dueDate: "2026-04-13T23:59:00",
     description: "Finish and submit Task card assignment.",
@@ -233,6 +233,11 @@ function renderTasks() {
                     class="todo-priority ${getPriorityClass(task.priority)}"
                     data-testid="test-todo-priority"
                   >
+                  <span
+                  class="todo-priority-indicator ${getPriorityClass(task.priority)}"
+                  data-testid="test-todo-priority-indicator">
+                  
+                  </span>
                     Priority ${task.priority}
                   </span>
                 </div>
@@ -283,6 +288,28 @@ function renderTasks() {
               <span class="todo-toggle-text">Complete</span>
             </label>
 
+            <label class="todo-status-control-label">
+  <span>Status:</span>
+
+  <select
+    class="todo-status-control"
+    data-testid="test-todo-status-control"
+    data-task-id="${task.id}"
+  >
+    <option value="Pending" ${task.status === "Pending" ? "selected" : ""}>
+      Pending
+    </option>
+
+    <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>
+      In Progress
+    </option>
+
+    <option value="Done" ${task.status === "Done" ? "selected" : ""}>
+      Done
+    </option>
+  </select>
+</label>
+
             <button
               id="edit-button"
               class="todo-button"
@@ -292,6 +319,8 @@ function renderTasks() {
             >
               Edit
             </button>
+
+            
 
             <button
               class="todo-button"
@@ -310,6 +339,7 @@ function renderTasks() {
   todoList.innerHTML = taskCards.join("");
 
   connectCompleteToggles();
+  connectStatusControls();
   connectEditButtons();
 }
 
@@ -343,14 +373,12 @@ function connectCompleteToggles() {
       //For example if the user checks the box, the task completed becomes true
       task.completed = toggle.checked;
       //This assigns task.status to either "Completed" or "Pending" if toggle.checked is true.
-      task.status = toggle.checked ? "Completed" : "Pending";
+      task.status = toggle.checked ? "Done" : "Pending";
 
       renderTasks();
     });
   });
 }
-
-
 
 function editTask(taskId) {
   editingTaskId = taskId;
@@ -373,16 +401,18 @@ function connectEditButtons() {
 
   //This loops through each button in the editable mode in each task card
   saveButtons.forEach((button) => {
-    button.addEventListener("click", ()=>{ 
-    //This is done so the browser can know the particular task that the save changes will be made
+    button.addEventListener("click", () => {
+      //This is done so the browser can know the particular task that the save changes will be made
       const taskId = Number(button.dataset.taskId);
 
-    //Searches the tasks array of objects to find the particular task to save changes
+      //Searches the tasks array of objects to find the particular task to save changes
       const task = tasks.find((task) => task.id === taskId);
-      if(!task) return;
+      if (!task) return;
 
       const title = document.getElementById(`edit-title-${taskId}`).value;
-      const description = document.getElementById(`edit-description-text-area-${taskId}`).value;
+      const description = document.getElementById(
+        `edit-description-text-area-${taskId}`,
+      ).value;
       const dueDate = document.getElementById(`edit-due-date-${taskId}`).value;
       const priority = document.getElementById(`edit-priority-${taskId}`).value;
 
@@ -404,6 +434,25 @@ function connectEditButtons() {
   });
 }
 
+function connectStatusControls() {
+  const statusControls = document.querySelectorAll(
+    '[data-testid="test-todo-status-control"]',
+  );
+
+  statusControls.forEach((control) => {
+    control.addEventListener("change", () => {
+      const taskId = Number(control.dataset.taskId);
+      const task = tasks.find((task) => task.id === taskId);
+
+      if (!task) return;
+
+      task.status = control.value;
+      task.completed = control.value === "Done";
+
+      renderTasks();
+    });
+  });
+}
 
 
 // const editForm = document.querySelectorAll(".edit-form");
