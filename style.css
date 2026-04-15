@@ -32,6 +32,7 @@ body {
 
 .todo-card {
   position: relative;
+  overflow: hidden;
   width: 100%;
   background: #ffffff;
   border-radius: 12px;
@@ -163,71 +164,128 @@ body {
   flex-shrink: 0;
 }
 
-.edit-overlay{
+.edit-overlay {
   display: none;
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: rgba(15, 23, 42, 0.45);
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.35);
 }
 
-
-
-.edit-form{
-  /* position: relative;
-  z-index: 3;
-  padding: 24px; */
-  background: #ffffff;
-  display: grid;
-  gap: 20px;
-  height: 100%;
-  /* border-radius: 8px; */
-}
-
-.edit-form-top{
-  display: grid;
-  /* this creates two colums column:1 - minmax(0, 1fr) column:1-auto */
-  /* 1fr means a fraction of available space */
-  /* It takes all the available space */
-  /* minmax(0, 1fr) means this column is allowed to shrink as small as 0, but normally it shoul take 1 fraction of the available space */
-
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 24px;
-  align-items: start;
-}
-
-.edit-form-main{
-  display: grid;
-  gap: 14px;
-}
-
-.edit-form-heading{
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 140px;
-  gap: 10px;
-}
-
-.edit-form-heading input{
-  /* flex-grow: 1 */
-  /* flex-shrink: 1 */
-  /* flex-basis: 0% */
-  flex: 1;
-}
-
-.edit-form input,
-.edit-form select,
-.edit_form textarea{
+.edit-form {
   width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 16px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 14px;
+  overflow: auto;
+  border-radius: 8px;
+  background: #f1f5f9;
+}
+
+.edit-form__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 190px);
+  gap: 14px;
+  align-items: start;
+  min-width: 0;
+  min-height: 0;
+}
+
+.edit-form__left {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.edit-form__heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 10px;
+  min-width: 0;
+}
+
+.edit-field {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.edit-field span {
+  display: block;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #475569;
+}
+
+.edit-field input,
+.edit-field select,
+.edit-field textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  padding: 10px 12px;
+  padding: 9px 10px;
   font: inherit;
+  font-size: 14px;
+  background: #ffffff;
+  color: #0f172a;
 }
 
-.edit-form textarea{
-  min-height: 96px;
-  /*  */
-  resize: vertical
+.edit-field input:focus,
+.edit-field select:focus,
+.edit-field textarea:focus {
+  border-color: #334155;
+  background: #e2e8f0;
+  outline: none;
+  box-shadow: 0 0 0 2px #334155;
+}
+
+.edit-field textarea {
+  min-height: 80px;
+  max-height: 130px;
+  resize: vertical;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  line-height: 1.4;
+  overflow: auto;
+}
+
+.edit-field--date input {
+  font-size: 13px;
+}
+
+.edit-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #cbd5e1;
+}
+
+.edit-form__actions button {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.edit-form__actions button:first-child {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
 }
 .todo-date {
   font-size: 20px;
@@ -239,6 +297,15 @@ body {
   font-size: 15px;
   font-weight: 700;
   color: #dc2626;
+}
+
+.todo-card-editing{
+  background: #a5a3a3;
+  padding: 6px;
+}
+
+.todo-card-editing .edit-form{
+  background: #f1f5f9;
 }
 
 .todo-description {
@@ -344,6 +411,23 @@ body {
 
   .todo-card__top {
     grid-template-columns: 1fr;
+  }
+
+  .edit-overlay {
+    padding: 12px;
+  }
+
+  .edit-form {
+    padding: 12px;
+  }
+
+  .edit-form__top,
+  .edit-form__heading {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-field textarea {
+    max-height: 120px;
   }
 
   .todo-date-block {

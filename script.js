@@ -107,81 +107,96 @@ function getTimeRemaining(dueDate) {
 }
 
 function getStatusClass(status) {
-  return status.toLowerCase().replace(" ", "-");
+  return String(status).toLowerCase().replace(" ", "-");
 }
 
 function getPriorityClass(priority) {
-  return priority.toLowerCase();
+  return String(priority).toLowerCase();
 }
+
+let editingTaskId = null;
 
 function renderTasks() {
   const taskCards = tasks.map((task) => {
+    if (editingTaskId === task.id) {
+      return `
+      <article class="todo-card todo-card-editing" data-testid="test-todo-card" data-task-id="${task.id}">
+        <div class="todo-card__content">
+          <form class="edit-form" data-testid="test-todo-edit-form">
+            <div class="edit-form__top">
+              <div class="edit-form__left">
+                <div class="edit-form__heading">
+                  <label class="edit-field" for="edit-title-${task.id}">
+                    <span>Change title</span>
+                    <input
+                      id="edit-title-${task.id}"
+                      type="text"
+                      data-testid="test-todo-edit-title-input"
+                      placeholder="Enter task title"
+                      value="${task.title}"
+                    />
+                  </label>
+
+                  <label class="edit-field" for="edit-priority-${task.id}">
+                    <span>Change priority</span>
+                    <select
+                      id="edit-priority-${task.id}"
+                      data-testid="test-todo-edit-priority-select"
+                    >
+                      <option value="Low" ${task.priority === "Low" ? "selected" : ""}>Low</option>
+                      <option value="Medium" ${task.priority === "Medium" ? "selected" : ""}>Medium</option>
+                      <option value="High" ${task.priority === "High" ? "selected" : ""}>High</option>
+                    </select>
+                  </label>
+                </div>
+
+                <label class="edit-field" for="edit-description-text-area-${task.id}">
+                  <span>Change description</span>
+                  <textarea
+                    id="edit-description-text-area-${task.id}"
+                    data-testid="test-todo-edit-description-input"
+                    placeholder="Enter text description"
+                  >${task.description}</textarea>
+                </label>
+              </div>
+
+              <label class="edit-field edit-field--date" for="edit-due-date-${task.id}">
+                <span>Change due date</span>
+                <input
+                  type="datetime-local"
+                  id="edit-due-date-${task.id}"
+                  data-testid="test-todo-edit-due-date-input"
+                  value="${task.dueDate}"
+                />
+              </label>
+            </div>
+
+            <div class="edit-form__actions">
+              <button
+                type="button"
+                data-testid="test-todo-save-button"
+                id="save-edit-${task.id}"
+                data-task-id="${task.id}"
+              >
+                Save changes
+              </button>
+              <button
+                type="button"
+                data-testid="test-todo-cancel-button"
+                id="cancel-edit-${task.id}"
+                data-task-id="${task.id}"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </article> `;
+    }
+
     return `
       <article class="todo-card" data-testid="test-todo-card" data-task-id="${task.id}">
         <div class="todo-card__content">
-        <div
-        id="edit-form-${task.id}"
-        class="edit-overlay"
-        data-testid="test-todo-edit-form"
-      >
-        <form class="edit-form">
-          <div class="edit-form-top">
-            <div class="edit-form-main">
-              <div class="edit-form-heading">
-               <label class="edit-field"> 
-               <span>Change title</span>
-               <input
-                  id="edit-title-${task.id}"
-                  type="text"
-                  data-testid="test-todo-edit-title-input"
-                  
-                  placeholder="Enter task title"
-                />
-               </label>
-                <label className="edit-field">
-                  <span>Change priority</span>
-                  <select
-                  id="edit-priority-${task.id}"
-                  data-testid="test-todo-edit-priority-select"
-                >
-                  <option value="Low"></option>
-                  <option value="Medium"></option>
-                  <option value="High"></option>
-                  Set Priority
-                </select>
-                </label>
-              </div>
-             <label className="edit-field">
-               <textarea
-                id="edit-description-text-area-${task.id}"
-                data-testid="test-todo-edit-description-input"
-                placeholder="Enter text description"
-              ></textarea>
-             </label>
-            </div>
-            <div class="edit-form-date">
-            <label>
-              <span>Change due date</span>
-              <input
-              type="datetime-local"
-              id="edit-due-date-${task.id}"
-              data-testid="test-todo-edit-due-date-input"
-              placeholder="Enter due date"
-            />
-            </label>
-            </div>
-          </div>
-
-          <div class="action-buttons">
-            <button data-testid="test-todo-save-button" id="save-edit-${task.id}" data-task-id="${task.id}">
-            Save changes
-          </button>
-          <button data-testid="test-todo-cancel-button" id="cancel-edit-${task.id}">
-            Cancel
-          </button>
-          </div>
-        </form>
-      </div>
           <div class="todo-card__top">
             <div class="todo-card__main">
               <div
@@ -288,12 +303,14 @@ function renderTasks() {
             </button>
           </div>
         </div>
+        
       </article> `;
   });
 
   todoList.innerHTML = taskCards.join("");
 
   connectCompleteToggles();
+  connectEditButtons();
 }
 
 function connectCompleteToggles() {
@@ -333,56 +350,11 @@ function connectCompleteToggles() {
   });
 }
 
-let editingTaskId;
+
 
 function editTask(taskId) {
-  const task = tasks.find((task) => task.id === taskId);
-  document.getElementById(`edit-title-${taskId}`).value = task.title;
-  document.getElementById(`edit-description-text-area-${taskId}`).value =
-    task.description;
-  document.getElementById(`edit-due-date-${taskId}`).value = task.dueDate;
-  document.getElementById(`edit-priority-${taskId}`).value = task.priority;
-  
-  document.getElementById(`edit-form-${taskId}`).style.display = "block";
-  document
-  .querySelector(`[data-task-id="${taskId}"]`)
-  .classList.add("is-editing");
-
   editingTaskId = taskId;
-
-  document
-  .getElementById(`save-edit-${editingTaskId}`)
-  .addEventListener("click", () => {
-    const task = tasks.find((task) => task.id === editingTaskId);
-    const title = document.getElementById(`edit-title-${editingTaskId}`).value;
-    const description = document.getElementById(
-      `description-text-area-${editingTaskId}`,
-    ).value;
-    const dueDate = document.getElementById(
-      `edit-due-date-${editingTaskId}`,
-    ).value;
-    const priority = document.getElementById(
-      `edit-priority-${editingTaskId}`,
-    ).value;
-
-    task.title = title;
-    task.description = description;
-    task.priority = priority;
-    task.dueDate = dueDate;
-
-    document.getElementById(`edit-form-${editingTaskId}`).style.display =
-      "none";
-
-      document.getElementById(`cancel-edit-${editingTaskId}`).addEventListener("click", () => {
-  document.getElementById(`edit-title-${editingTaskId}`).value = "";
-  document.getElementById(`edit-description-text-area-${editingTaskId}`).value = "";
-  document.getElementById(`edit-due-date-${editingTaskId}`).value = "";
-  document.getElementById(`edit-priority-${editingTaskId}`).value = "";
-  document.getElementById(`edit-container-${editingTaskId}`).style.display = "none";
-});
-
-    renderTasks();
-  });
+  renderTasks();
 }
 
 function deleteTask(taskId) {
@@ -391,36 +363,46 @@ function deleteTask(taskId) {
 
 renderTasks();
 
-const saveButtons = document.querySelectorAll(
-  '[data-testid="test-todo-save-button"]',
-);
+function connectEditButtons() {
+  const saveButtons = document.querySelectorAll(
+    '[data-testid="test-todo-save-button"]',
+  );
+  const cancelButtons = document.querySelectorAll(
+    '[data-testid="test-todo-cancel-button"]',
+  );
 
-
-//This loops through each button in the editable mode in each task card
-saveButtons.forEach((button) => {
-  button.addEventListener("click", ()=>{ 
+  //This loops through each button in the editable mode in each task card
+  saveButtons.forEach((button) => {
+    button.addEventListener("click", ()=>{ 
     //This is done so the browser can know the particular task that the save changes will be made
-    const taskId = Number(button.dataset.taskId);
+      const taskId = Number(button.dataset.taskId);
 
     //Searches the tasks array of objects to find the particular task to save changes
-    const task = tasks.find((task) => task.id === taskId);
-    if(!task) return;
+      const task = tasks.find((task) => task.id === taskId);
+      if(!task) return;
 
-    const title = document.getElementById(`edit-title-${taskId}`).value;
-    const description = document.getElementById(`edit-description-text-area-${taskId}`).value;
-    const dueDate = document.getElementById(`edit-due-date-${taskId}`).value;
-    const priority = document.getElementById(`edit-priority-${taskId}`).value;
+      const title = document.getElementById(`edit-title-${taskId}`).value;
+      const description = document.getElementById(`edit-description-text-area-${taskId}`).value;
+      const dueDate = document.getElementById(`edit-due-date-${taskId}`).value;
+      const priority = document.getElementById(`edit-priority-${taskId}`).value;
 
-    task.title = title;
-    task.description = description;
-    task.priority = priority;
-    task.dueDate = dueDate;
+      task.title = title;
+      task.description = description;
+      task.priority = priority;
+      task.dueDate = dueDate;
+      editingTaskId = null;
 
-    renderTasks();
+      renderTasks();
+    });
   });
-});
 
-
+  cancelButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      editingTaskId = null;
+      renderTasks();
+    });
+  });
+}
 
 
 
@@ -430,5 +412,7 @@ saveButtons.forEach((button) => {
 // });
 
 setInterval(() => {
-  renderTasks();
+  if (editingTaskId === null) {
+    renderTasks();
+  }
 }, 30000);
