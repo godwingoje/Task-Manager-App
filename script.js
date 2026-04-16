@@ -114,10 +114,30 @@ function getPriorityClass(priority) {
   return String(priority).toLowerCase();
 }
 
+const DESCRIPTION_PREVIEW_LENGTH = 25;
+const expandedTaskIds = [];
 let editingTaskId = null;
 
 function renderTasks() {
   const taskCards = tasks.map((task) => {
+    const isLongDescription =
+      task.description.length > DESCRIPTION_PREVIEW_LENGTH;
+      //This checks whether the current Id is part of the expandedTaskIds 
+      //Is the current taskId part of the expanded task Ids?
+    const isExpanded = expandedTaskIds.includes(task.id);
+    //This decides what text will actually appear on the card
+    //It is the version of the description that should be visible right now
+    const visibleDescription =
+    //This checks whether the description is long AND if it is not expanded
+    //Line 133 means the description is long and, the user has not opened it yet.
+      isLongDescription && !isExpanded
+      //If the description is long and the it has not expanded
+      //Show the shorter version
+      //Otherwise show the complete description
+      //Slice means to cut a string from a starting point to another
+      //In this case slice starts from 0 and ends at the preview limit, then it adds the three dots at the end
+        ? `${task.description.slice(0, DESCRIPTION_PREVIEW_LENGTH)}....`
+        : task.description;
     if (editingTaskId === task.id) {
       return `
       <article class="todo-card todo-card-editing" data-testid="test-todo-card" data-task-id="${task.id}">
@@ -272,20 +292,27 @@ function renderTasks() {
             class="todo-description"
             data-testid="test-todo-description"
           >
-            ${task.description}
+            ${visibleDescription}
            
           </p>
           </div>
-
-          <button
-          class="todo-expand-toggle"
-          type="button"
-          data-testid="test-do-expand-toggle"
-          aria-expanded="false"
-          aria-controls="todo-description-section-${task.id}"
-          data-task-id="${task.id}">
-
-          </button>
+    ${
+      isLongDescription
+      ?`
+        <button
+        class="todo-expand-toggle"
+        type="button"
+        data-testid="test-todo-expand-toggle"
+        aria-expanded=${isExpanded}
+        aria-controls="todo-description-section-${task.id}"
+        data-task-id="${task.id}"
+        >
+        ${isExpanded ? "Show less" : "Show more"}
+        </button>
+        `
+        : ""
+    }
+          
 
           <div class="todo-actions">
             <label class="todo-toggle-label">
@@ -353,10 +380,62 @@ function renderTasks() {
   });
 
   todoList.innerHTML = taskCards.join("");
-
+  
+  
   connectCompleteToggles();
   connectStatusControls();
+  connectExpandToggles();
   connectEditButtons();
+
+
+//In simple terms this function means
+//Find all Show more / Show less buttons
+//When clicked, get the task id
+//If that is not expanded, add it to the expanded list
+//If it is already expanded, remove it from the expanded list.
+//Redraw the cards
+  function connectExpandToggles(){
+    const expandButtons =  document.querySelectorAll(`[data-testid="test-todo-expand-toggle"]`,)
+
+    //This line loops through each element in the expandButtons and performs an action of on each of them
+    //button is just a temporary name
+    expandButtons.forEach((button)=>{
+      //On clicking any button run the code inside the function 
+      button.addEventListener("click", () => {
+        //The line below converts a string task Id into a number
+        //It is converted because the task objects in the first lines of code uses numbers not strings
+        const taskId = Number(button.dataset.taskId);
+        //The code below checks whether the task id is inside the array
+        //if expandedTaskIds = [1, 3];
+        //and taskId = 3;
+        //expandedTaskIds.indexOf(3) returns 1 because the arrays count from zero
+        //if expandedTaskIds.indexOf(3) returns -1, it means the value was not found in the array
+        //It simply returns the index of an expandedTaskId
+        const existingIndex = expandedTaskIds.indexOf(taskId);
+        //The code below means if this task is not currently expanded
+        //add it to expandedTaskIds
+        //Otherwise remove it from expandedTaskIds 
+        if(existingIndex === -1){
+          //push() means to add a value to the end of an array
+          //e.g if expandedTaskIds = []; taskId = 2 expandedTaskId.push(2), now expanedTaskIds[2] after pushing
+          expandedTaskIds.push(taskId);
+          //the else block means that the task is already expanded, so clicking the button should collapse it
+          //It runs if the task id was already found
+          //splice() means starting at this index, remove one time
+          //splice(start_index, 1(i.e one item))
+          //e.g expandedTaskIds = [1, 2, 3];
+          //taskId = 2;
+          //existingIndex = 1;
+          //expandedTaskIds.splice(1, 1);
+          //This removes the item at index 1
+        }else{
+          expandedTaskIds.splice(existingIndex, 1);
+        }
+
+        renderTasks();
+      })
+    })
+  }
 }
 
 function connectCompleteToggles() {
@@ -469,7 +548,6 @@ function connectStatusControls() {
     });
   });
 }
-
 
 // const editForm = document.querySelectorAll(".edit-form");
 // editForm.addEventListener("submit", function (event) {

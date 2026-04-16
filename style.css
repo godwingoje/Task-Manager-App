@@ -340,6 +340,24 @@ body {
   color: #dc2626;
 }
 
+.todo-collapse-section{
+  overflow-wrap: anywhere;
+}
+.todo-expand-toggle{
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.todo-expand-toggle:focus-visible{
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
 .todo-card-editing{
   background: #a5a3a3;
   padding: 6px;
