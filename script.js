@@ -114,7 +114,7 @@ function getPriorityClass(priority) {
   return String(priority).toLowerCase();
 }
 
-const DESCRIPTION_PREVIEW_LENGTH = 25;
+const DESCRIPTION_PREVIEW_LENGTH = 50;
 const expandedTaskIds = [];
 let editingTaskId = null;
 
