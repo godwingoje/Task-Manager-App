@@ -340,21 +340,32 @@ body {
   color: #dc2626;
 }
 
+
+
 .todo-collapse-section{
+  /* overflow-wrap; tells the browser to wrap text, or break text if it is too long */
+  /* anywhere means if the word is too long, break it anywhere necessary to stop overflow */
   overflow-wrap: anywhere;
 }
 .todo-expand-toggle{
+  /* Justify self works when the button is inside a CSS grid container */
   justify-self: start;
+  /* Removes border on the buttons */
   border: 0;
   background: transparent;
   color: #2563eb;
+  /* Inherits the page's font */
   font: inherit;
   font-weight: 700;
   cursor: pointer;
   padding: 0;
 }
 
+/* The :focus-visible is a pseudo class available for keyboard users */
+/* If someone uses the Tab key to move through the page, they need to see which element is currently focused on */
+/* So this pseudo class applies a stylr when the button is focused in a way that should be visibly shown, like keyboard navigation */
 .todo-expand-toggle:focus-visible{
+  /* This draws a blue outline around the button when it focused after clicking at tab, this offers additional accessiblility */
   outline: 3px solid #2563eb;
   outline-offset: 3px;
 }
