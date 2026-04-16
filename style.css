@@ -358,6 +358,7 @@ body {
   outline: 3px solid #2563eb;
   outline-offset: 3px;
 }
+
 .todo-card-editing{
   background: #a5a3a3;
   padding: 6px;
