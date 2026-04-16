@@ -263,13 +263,29 @@ function renderTasks() {
             </div>
           </div>
 
-          <p
+          <div
+          id="todo-description-section-${task.id}"
+          class="todo-collapsible-section"
+          date-testid="test-todo-collapsible-section"
+
+         <p
             class="todo-description"
             data-testid="test-todo-description"
           >
             ${task.description}
            
           </p>
+          </div>
+
+          <button
+          class="todo-expand-toggle"
+          type="button"
+          data-testid="test-do-expand-toggle"
+          aria-expanded="false"
+          aria-controls="todo-description-section-${task.id}"
+          data-task-id="${task.id}">
+
+          </button>
 
           <div class="todo-actions">
             <label class="todo-toggle-label">
@@ -372,7 +388,7 @@ function connectCompleteToggles() {
       //Its purpose is synchronize the task's internal completion state with the current state of the UI toggle.
       //For example if the user checks the box, the task completed becomes true
       task.completed = toggle.checked;
-      //This assigns task.status to either "Completed" or "Pending" if toggle.checked is true.
+      //This assigns task.status to either "Done" or "Pending" if toggle.checked is true.
       task.status = toggle.checked ? "Done" : "Pending";
 
       renderTasks();
