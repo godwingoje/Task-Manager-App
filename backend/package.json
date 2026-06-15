@@ -1,0 +1,24 @@
+{
+  "name": "stage-0-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbursa-goje/Task-Manager-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mbursa-goje/Task-Manager-App/issues"
+  },
+  "homepage": "https://github.com/mbursa-goje/Task-Manager-App#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

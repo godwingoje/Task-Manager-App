@@ -18,7 +18,7 @@ const tasks = [
     dueDate: "2026-04-13T23:59:00",
     description: "Finish and submit Task card assignment.",
     completed: true,
-  },
+  }, 
   {
     id: 3,
     tag: "Moderate",
@@ -207,7 +207,7 @@ function renderTasks() {
                 type="button"
                 data-testid="test-todo-save-button"
                 id="save-edit-${task.id}"
-                data-task-id="${task.id}"
+                data-t ask-id="${task.id}"
               >
                 Save changes
               </button>
@@ -487,14 +487,14 @@ function connectCompleteToggles() {
   });
 }
 
-function editTask(taskId) {
-  editingTaskId = taskId;
-  renderTasks();
-}
+// function editTask(taskId) {
+//   editingTaskId = taskId;
+//   renderTasks();
+// }
 
-function deleteTask(taskId) {
-  alert(`Delete clicked for task ${taskId}`);
-}
+// function deleteTask(taskId) {
+//   alert(`Delete clicked for task ${taskId}`);
+// }
 
 renderTasks();
 
