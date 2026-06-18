@@ -1,50 +1,126 @@
-const tasks = [
-  {
-    id: 1,
-    tag: "Work",
-    title: "Start Project",
-    status: "Pending",
-    priority: "High",
-    dueDate: "2026-04-16T23:59:00",
-    description: "Set up a project using HTML, CSS, and JavaScript.",
-    completed: false,
-  },
-  {
-    id: 2,
-    tag: "Urgent",
-    title: "Submit assignment",
-    status: "Done",
-    priority: "Medium",
-    dueDate: "2026-04-13T23:59:00",
-    description: "Finish and submit Task card assignment.",
-    completed: true,
-  }, 
-  {
-    id: 3,
-    tag: "Moderate",
-    title: "Exercise",
-    status: "Pending",
-    priority: "Low",
-    dueDate: "2026-04-14T18:00:00",
-    description: "Arm workout for 40 minutes.",
-    completed: false,
-  },
-  {
-    id: 4,
-    tag: "High",
-    title: "Complete HNG Stage-1a task",
-    status: "Pending",
-    priority: "High",
-    dueDate: "2026-04-16T23:59:00",
-    description:
-      "Add additional functionalities to Task Manager completed in Stage-0, features include an additional edit buton, 'show more' button for descriptions that are too long, an enhancement to the priority tag, and an additional feature to the time functionalty",
-    completed: false,
-  },
-];
+import type { Task } from "./types/tasks";
+const DESCRIPTION_PREVIEW_LENGTH = 100;
+const expandedTaskIds: number[] = [];
+let editingTaskId: number | null = null;
+const todoList = document.getElementById("todo-list") as HTMLElement;
+const deleteDialog = document.getElementById(
+  "delete-dialog",
+) as HTMLDialogElement;
+let taskIdToDelete: number | null = null;
+const addTaskDialog = document.getElementById(
+  "add-task-dialog",
+) as HTMLDialogElement;
+const cancelAddTaskButton = document.getElementById(
+  "cancel-add-task-button",
+) as HTMLButtonElement;
+const submitAddTaskButton = document.getElementById(
+  "submit-add-task-button",
+) as HTMLButtonElement;
 
-const todoList = document.getElementById("todo-list");
+const confirmDeleteButton = document.getElementById(
+  "confirm-delete-button",
+) as HTMLButtonElement;
 
-function formatDueDate(dueDate) {
+confirmDeleteButton.addEventListener("click", async (e) => {
+  e.preventDefault();
+  console.log("confirm clicked");
+  console.log("taskIdToDelete:", taskIdToDelete);
+  if (taskIdToDelete === null) return;
+
+  try {
+    const response = await fetch(
+      `http://localhost:8000/todos/${taskIdToDelete}`,
+      {
+        method: "DELETE",
+      },
+    );
+
+    if (!response.ok) throw new Error(`Delete failed: ${response.status}`);
+
+    taskIdToDelete = null;
+
+    deleteDialog.close();
+
+    await fetchTodos();
+  } catch (error) {
+    console.error("Failed to delete task", error);
+  }
+});
+let tasks: Task[] = [];
+async function fetchTodos() {
+  try {
+    const response = await fetch("http://localhost:8000/todos");
+
+    if (!response.ok) {
+      throw new Error(`failed to fetch: ${response.status}`);
+    }
+    tasks = await response.json();
+    renderTasks();
+  } catch (error) {
+    console.error("error details", error);
+  }
+}
+
+await fetchTodos();
+
+const addTaskButton = document.getElementById(
+  "add-task-button",
+) as HTMLButtonElement;
+
+addTaskButton.addEventListener("click", () => {
+  addTaskDialog.showModal();
+});
+
+cancelAddTaskButton.addEventListener("click", () => {
+  addTaskDialog.close();
+});
+
+submitAddTaskButton.addEventListener("click", async () => {
+  const title = (document.getElementById("task-title") as HTMLInputElement).value.trim();
+  const description = (
+    document.getElementById("new-task-description") as HTMLTextAreaElement
+  ).value.trim();
+  const priority = (
+    document.getElementById("new-task-priority") as HTMLSelectElement
+  ).value;
+  const dueDateRaw = (
+    document.getElementById("new-task-due-date") as HTMLInputElement
+  ).value;
+  const tag = (
+    document.getElementById("new-task-tag") as HTMLInputElement
+  ).value;
+
+  if (!title) {
+    alert("Title is required");
+    return;
+  }
+  const newTask = {
+    title,
+    description,
+    priority,
+    tag,
+    dueDate: dueDateRaw
+      ? new Date(dueDateRaw).toISOString()
+      : new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+  };
+
+  try {
+    const response = await fetch("http://localhost:8000/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newTask),
+    });
+
+    if (!response.ok) throw new Error(`POST failed: ${response.status}`);
+
+    await fetchTodos();
+    addTaskDialog.close()
+  } catch (error) {
+    console.error("Failed to add task", error);
+  }
+});
+
+function formatDueDate(dueDate: string): string {
   const date = new Date(dueDate);
 
   return date.toLocaleDateString("en-NG", {
@@ -56,7 +132,7 @@ function formatDueDate(dueDate) {
   });
 }
 
-function getTimeRemaining(dueDate) {
+function getTimeRemaining(dueDate: string): string {
   const now = new Date();
   const due = new Date(dueDate);
 
@@ -117,19 +193,15 @@ function getTimeRemaining(dueDate) {
     : `Due in ${remainingMinutes} minutes`;
 }
 
-function getStatusClass(status) {
+function getStatusClass(status: string): string {
   return String(status).toLowerCase().replace(" ", "-");
 }
 
-function getPriorityClass(priority) {
+function getPriorityClass(priority: string): string {
   return String(priority).toLowerCase();
 }
 
-const DESCRIPTION_PREVIEW_LENGTH = 100;
-const expandedTaskIds = [];
-let editingTaskId = null;
-
-function renderTasks() {
+function renderTasks(): void {
   const taskCards = tasks.map((task) => {
     const isLongDescription =
       task.description.length > DESCRIPTION_PREVIEW_LENGTH;
@@ -197,9 +269,9 @@ function renderTasks() {
                   type="datetime-local"
                   id="edit-due-date-${task.id}"
                   data-testid="test-todo-edit-due-date-input"
-                  value="${task.dueDate}"
+                  value="${new Date(task.dueDate).toISOString().slice(0, 16)}"
                 />
-              </label>
+              </label> 
             </div>
 
             <div class="edit-form__actions">
@@ -207,7 +279,7 @@ function renderTasks() {
                 type="button"
                 data-testid="test-todo-save-button"
                 id="save-edit-${task.id}"
-                data-t ask-id="${task.id}"
+                data-task-id="${task.id}"
               >
                 Save changes
               </button>
@@ -289,7 +361,7 @@ function renderTasks() {
                 data-testid="test-todo-time-remaining"
                 aria-live="polite"
               >
-                ${task.status === "Done" ? "Completed": getTimeRemaining(task.dueDate)}
+                ${task.status === "Done" ? "Completed" : getTimeRemaining(task.dueDate)}
               </span>
             </div>
           </div>
@@ -368,7 +440,7 @@ function renderTasks() {
               class="todo-button"
               type="button"
               data-testid="test-todo-edit-button"
-              onclick="editTask(${task.id})"
+              data-task-id="${task.id}"
             >
               Edit
             </button>
@@ -379,7 +451,7 @@ function renderTasks() {
               class="todo-button"
               type="button"
               data-testid="test-todo-delete-button"
-              onclick="deleteTask(${task.id})"
+               data-task-id="${task.id}"
             >
               Delete
             </button>
@@ -411,10 +483,10 @@ function renderTasks() {
     //button is just a temporary name
     expandButtons.forEach((button) => {
       //On clicking any button run the code inside the function
-      button.addEventListener("click", () => {
+      button.addEventListener("click", (): void => {
         //The line below converts a string task Id into a number
         //It is converted because the task objects in the first lines of code uses numbers not strings
-        const taskId = Number(button.dataset.taskId);
+        const taskId = Number((button as HTMLElement).dataset.taskId);
         //The code below checks whether the task id is inside the array
         //if expandedTaskIds = [1, 3];
         //and taskId = 3;
@@ -448,25 +520,20 @@ function renderTasks() {
   }
 }
 
-
-
-
-function connectCompleteToggles() {
-
+function connectCompleteToggles(): void {
   const toggles = document.querySelectorAll(
     '[data-testid="test-todo-complete-toggle"]',
   );
-  toggles.forEach((toggle) => {
-    toggle.addEventListener("change", () => {
-
-      const taskId = Number(toggle.dataset.taskId);
+  toggles.forEach((toggle: Element) => {
+    toggle.addEventListener("change", (): void => {
+      const taskId = Number((toggle as HTMLElement).dataset.taskId);
       //tasks refers to the global array of task objects, each containing specific properties
       //find() is an array method that searches through tasks and returns the first object
       //The condition (task) => task.id ===taskId is an arrow function that checks if the current
       //task's id property equals the taskId equals the taskId extracted from the toggle's data attribute
       //Its purpose is to locate the specific task object in the tasks array that corresponds to the toggle being interacted with.
       //If no match is found, task becomes undefined. This step links the UI element back to the data model
-      const task = tasks.find((task) => task.id === taskId);
+      const task = tasks.find((t: Task) => t.id === taskId);
 
       //This exits the callback function without executing any further code,
       //It checks if the task did not loacte any matching tasks
@@ -478,27 +545,27 @@ function connectCompleteToggles() {
       //task.completed directly assigns the boolean value to the completed property of the found task object
       //Its purpose is synchronize the task's internal completion state with the current state of the UI toggle.
       //For example if the user checks the box, the task completed becomes true
-      task.completed = toggle.checked;
+      task.completed = (toggle as HTMLInputElement).checked;
       //This assigns task.status to either "Done" or "Pending" if toggle.checked is true.
-      task.status = toggle.checked ? "Done" : "Pending";
+      task.status = (toggle as HTMLInputElement).checked ? "Done" : "Pending";
 
       renderTasks();
     });
   });
 }
 
-// function editTask(taskId) {
+// function editTask(taskId: number) {
 //   editingTaskId = taskId;
 //   renderTasks();
 // }
 
-// function deleteTask(taskId) {
+// function deleteTask(taskId: number) {
 //   alert(`Delete clicked for task ${taskId}`);
 // }
 
 renderTasks();
 
-function connectEditButtons() {
+function connectEditButtons(): void {
   const saveButtons = document.querySelectorAll(
     '[data-testid="test-todo-save-button"]',
   );
@@ -506,30 +573,73 @@ function connectEditButtons() {
     '[data-testid="test-todo-cancel-button"]',
   );
 
+  const editButtons = document.querySelectorAll(
+    `[data-testid="test-todo-edit-button"]`,
+  );
+
+  editButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const taskId = Number((button as HTMLElement).dataset.taskId);
+      editingTaskId = taskId;
+      renderTasks();
+    });
+  });
+
+  const deleteButtons = document.querySelectorAll(
+    `[data-testid="test-todo-delete-button"]`,
+  );
+
+  deleteButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      taskIdToDelete = Number((button as HTMLElement).dataset.taskId);
+
+      deleteDialog.showModal();
+    });
+  });
+
   //This loops through each button in the editable mode in each task card
   saveButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       //This is done so the browser can know the particular task that the save changes will be made
-      const taskId = Number(button.dataset.taskId);
-
+      const taskId = Number((button as HTMLElement).dataset.taskId);
+      console.log("Save clicked");
       //Searches the tasks array of objects to find the particular task to save changes
       const task = tasks.find((task) => task.id === taskId);
       if (!task) return;
 
-      const title = document.getElementById(`edit-title-${taskId}`).value;
-      const description = document.getElementById(
-        `edit-description-text-area-${taskId}`,
+      const title = (
+        document.getElementById(`edit-title-${taskId}`) as HTMLInputElement
       ).value;
-      const dueDate = document.getElementById(`edit-due-date-${taskId}`).value;
-      const priority = document.getElementById(`edit-priority-${taskId}`).value;
+      const description = (
+        document.getElementById(
+          `edit-description-text-area-${taskId}`,
+        ) as HTMLTextAreaElement
+      ).value;
+      const dueDateRaw = document.getElementById(
+        `edit-due-date-${taskId}`,
+      ) as HTMLInputElement;
+      const priority = (
+        document.getElementById(`edit-priority-${taskId}`) as HTMLSelectElement
+      ).value as Task["priority"];
 
-      task.title = title;
-      task.description = description;
-      task.priority = priority;
-      task.dueDate = dueDate;
-      editingTaskId = null;
+      const dueDate = dueDateRaw.value
+        ? new Date(dueDateRaw.value).toISOString()
+        : task.dueDate;
 
-      renderTasks();
+      try {
+        const response = await fetch(`http://localhost:8000/todos/${taskId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, description, dueDate, priority }),
+        });
+
+        if (!response.ok) throw new Error(`PATCH failed: ${response.status}`);
+
+        editingTaskId = null;
+        await fetchTodos();
+      } catch (error) {
+        console.error("Failed to save task", error);
+      }
     });
   });
 
@@ -546,15 +656,15 @@ function connectStatusControls() {
     '[data-testid="test-todo-status-control"]',
   );
 
-  statusControls.forEach((control) => {
-    control.addEventListener("change", () => {
-      const taskId = Number(control.dataset.taskId);
-      const task = tasks.find((task) => task.id === taskId);
+  statusControls.forEach((control: Element) => {
+    control.addEventListener("change", (): void => {
+      const taskId = Number((control as HTMLSelectElement).dataset.taskId);
+      const task = tasks.find((task: Task) => task.id === taskId);
 
       if (!task) return;
 
-      task.status = control.value;
-      task.completed = control.value === "Done";
+      task.status = (control as HTMLSelectElement).value as Task["status"];
+      task.completed = (control as HTMLSelectElement).value === "Done";
 
       renderTasks();
     });

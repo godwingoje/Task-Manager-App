@@ -2,11 +2,56 @@
   box-sizing: border-box;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #dbeafe inset;
+  box-shadow: 0 0 0 1000px #dbeafe inset;
+
+  -webkit-text-fill-color: #1e3a8a;
+  caret-color: #1e3a8a;
+
+  border: 1px solid #93c5fd;
+
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.mrdialog {
+  border: none;
+  border-radius: 1rem;
+}
+
+.mrdialog form {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   background: #bfdbfe;
   color: #0f172a;
+}
+
+.dialog-button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .page {
@@ -41,15 +86,15 @@ body {
 
 /* .todo-card.is-editing .todo-card__content{
   filter: blur(2px);
-} */
+  } */
 
-.label{
+.label {
   display: flex;
-  
 }
 .todo-list {
   display: grid;
   gap: 20px;
+  grid-template-columns: repeat(1fr, 1fr);
 }
 
 .todo-card__content {
@@ -125,26 +170,26 @@ body {
   font-weight: 700;
 }
 
-.todo-priority{
+.todo-priority {
   gap: 6px;
 }
 
-.todo-priority-indicator{
+.todo-priority-indicator {
   width: 8px;
   height: 8px;
   border-radius: 999px;
   flex-shrink: 0;
 }
 
-.todo-priority-indicator.low{
+.todo-priority-indicator.low {
   background: #166534;
 }
 
-.todo-priority-indicator.medium{
+.todo-priority-indicator.medium {
   background: #854d0e;
 }
 
-.todo-priority-indicator.high{
+.todo-priority-indicator.high {
   background: #991b1b;
 }
 
@@ -203,7 +248,6 @@ body {
   background: #ffffff;
   color: #0f172a;
 }
-
 
 .edit-overlay {
   display: none;
@@ -340,14 +384,12 @@ body {
   color: #dc2626;
 }
 
-
-
-.todo-collapse-section{
+.todo-collapse-section {
   /* overflow-wrap; tells the browser to wrap text, or break text if it is too long */
   /* anywhere means if the word is too long, break it anywhere necessary to stop overflow */
   overflow-wrap: anywhere;
 }
-.todo-expand-toggle{
+.todo-expand-toggle {
   /* Justify self works when the button is inside a CSS grid container */
   justify-self: start;
   /* Removes border on the buttons */
@@ -364,18 +406,18 @@ body {
 /* The :focus-visible is a pseudo class available for keyboard users */
 /* If someone uses the Tab key to move through the page, they need to see which element is currently focused on */
 /* So this pseudo class applies a stylr when the button is focused in a way that should be visibly shown, like keyboard navigation */
-.todo-expand-toggle:focus-visible{
+.todo-expand-toggle:focus-visible {
   /* This draws a blue outline around the button when it focused after clicking at tab, this offers additional accessiblility */
   outline: 3px solid #2563eb;
   outline-offset: 3px;
 }
 
-.todo-card-editing{
+.todo-card-editing {
   background: #a5a3a3;
   padding: 6px;
 }
 
-.todo-card-editing .edit-form{
+.todo-card-editing .edit-form {
   background: #f1f5f9;
 }
 
@@ -457,7 +499,9 @@ body {
   padding: 8px 14px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .todo-button:hover {
@@ -509,4 +553,78 @@ body {
   .todo-date {
     font-size: 18px;
   }
+}
+
+.add-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button {
+  padding: 1rem;
+  font-size: large;
+  margin-top: 1.5rem;
+  background: white;
+  border: none;
+  border-radius: 0.4rem;
+  box-shadow: 4px 4px rgba(0, 0, 0, 0.15);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.dialog::backdrop {
+  background-color: hsla(250, 100%, 50%, 0.008);
+}
+.delete-button {
+  color: rgb(254, 227, 227);
+  background-color: red;
+}
+
+.delete-button:hover {
+  color: rgb(254, 227, 227);
+  background-color: rgb(174, 1, 1);
+}
+
+.add-task-drawer-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 8px;
+  justify-content: center;
+}
+
+.add-task-button {
+  padding: 0.5rem;
+  /* font-size: small; */
+  /* margin-top: 1.5rem; */
+  background: rgb(219, 234, 254);
+  /* border: none; */
+  border-radius: 0.4rem;
+  font-weight: 500;
+
+  /* box-shadow: 4px 4px rgba(0, 0, 0, 0.15); */
+}
+
+.add-task-button:hover{
+  background: rgb(201, 224, 254);
+}
+
+.add-dialog {
+  border: none;
+  border-radius: 1rem;
+  width: clamp(320px, 80vw, 400px);
+  padding: 1rem;
+}
+
+.add-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

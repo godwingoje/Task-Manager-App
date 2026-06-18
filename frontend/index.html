@@ -4,18 +4,102 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Task Tracker App</title>
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <main class="page">
-      
       <section class="todo-section">
-        <h1 class="todo-page-title">To-do List</h1>
+        <h1 class="todo-page-title font-extrabold tracking-widest">
+          To-do List
+        </h1>
 
         <div id="todo-list" class="todo-list"></div>
+        <div class="add-button">
+          <button id="add-task-button" class="button">Add Task</button>
+        </div>
       </section>
     </main>
 
-    <script defer src="/script.js"></script>
+    <script defer src="/src/script.ts" type="module"></script>
+
+    <dialog id="delete-dialog" class="mrdialog">
+      <form>
+        <div style="text-align: center; font-weight: bolder; font-size: large">
+          Delete task?
+        </div>
+        <p>This action cannot be undone</p>
+        <div class="dialog-button-container">
+          <button
+            value="confirm"
+            id="confirm-delete-button"
+            class="todo-button delete-button"
+          >
+            Delete
+          </button>
+          <button value="cancel" class="todo-button">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="add-task-dialog" class="add-dialog">
+      <div style="text-align: center; font-weight: bolder; font-size: large">
+        Add New Task
+      </div>
+      <form>
+        <label class="edit-field" for="task-title">
+          <span>Title</span>
+          <input required type="text" id="task-title" placeholder="Enter task title" />
+        </label>
+        <label class="edit-field" for="new-task-description">
+          <span>Description</span>
+          <textarea
+          required
+            name=""
+            id="new-task-description"
+            placeholder="Enter description"
+          ></textarea>
+        </label>
+        <label for="" class="edit-field">
+          <span>Priority</span>
+          <select required id="new-task-priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </label>
+        <label for="" class="edit-field">
+          <span>Tag</span>
+          <select required name="" id="new-task-tag">
+            <option value="General">General</option>
+            <option value="Work">Work</option>
+            <option value="Urgent">Urgent</option>
+            <option value="Vibe">Vibe</option>
+          </select>
+        </label>
+        <label for="new-task-due-date" class="edit-field">
+          <span>Due date</span>
+          <input required type="datetime-local" id="new-task-due-date" />
+        </label>
+
+        <div class="add-task-drawer-actions">
+          <button
+            type="button"
+            value="confirm"
+            id="submit-add-task-button"
+            class="todo-button add-task-button"
+          >
+            Add Task
+          </button>
+          <button
+            value="cancel"
+            id="cancel-add-task-button"
+            type="button"
+            class="todo-button"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </dialog>
   </body>
 </html>

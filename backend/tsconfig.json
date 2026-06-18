@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./",
+    "module": "ESNext",
+    "target": "esnext",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "bundler",
+    "ignoreDeprecations": "6.0",
+    "types": ["node"]
+  },
+  "include": ["src", "prisma", "generated"],
+  "exclude": ["node_modules", "dist"]
+}
