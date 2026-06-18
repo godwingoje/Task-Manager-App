@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node ./server.js",
     "dev": "nodemon --watch src --watch generated --ext ts --exec tsx src/server.ts",
     "build": "tsc",
     "type-check": "tsc --noEmit",
