@@ -1,4 +1,5 @@
 import type { Task } from "./types/tasks";
+const API_URL = import.meta.env.VITE_API_URL
 const DESCRIPTION_PREVIEW_LENGTH = 100;
 const expandedTaskIds: number[] = [];
 let editingTaskId: number | null = null;
@@ -29,7 +30,7 @@ confirmDeleteButton.addEventListener("click", async (e) => {
 
   try {
     const response = await fetch(
-      `http://localhost:8000/todos/${taskIdToDelete}`,
+      `${API_URL}/todos/${taskIdToDelete}`,
       {
         method: "DELETE",
       },
@@ -49,7 +50,7 @@ confirmDeleteButton.addEventListener("click", async (e) => {
 let tasks: Task[] = [];
 async function fetchTodos() {
   try {
-    const response = await fetch("http://localhost:8000/todos");
+    const response = await fetch(`${API_URL}/todos`);
 
     if (!response.ok) {
       throw new Error(`failed to fetch: ${response.status}`);
@@ -105,7 +106,7 @@ submitAddTaskButton.addEventListener("click", async () => {
   };
 
   try {
-    const response = await fetch("http://localhost:8000/todos", {
+    const response = await fetch(`${API_URL}/todos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTask),
@@ -627,7 +628,7 @@ function connectEditButtons(): void {
         : task.dueDate;
 
       try {
-        const response = await fetch(`http://localhost:8000/todos/${taskId}`, {
+        const response = await fetch(`${API_URL}/todos/${taskId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ title, description, dueDate, priority }),

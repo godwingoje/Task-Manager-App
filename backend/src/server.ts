@@ -17,7 +17,7 @@ app.use(express.json());
 // app.use(cors({
 //   origin: "http://localhost:5173"
 // }))
-app.use(cors());
+app.use(cors({origin: "*"}));
 
 app.get("/", (req, res) => {
   res.send("Todo App!");
@@ -70,10 +70,7 @@ app.get("/todos/:id", async (req, res) => {
 });
 
 // dynamic routing
-app.get(`/todos/:id/:status`, (req, res) => {
-  // res.send(req.params); route parameters
-  res.send(req.query); //query parameters
-});
+
 
 //to create a new task
 app.post("/todos", async (req, res) => {
@@ -137,7 +134,7 @@ app.delete("/todos/:id", async (req, res) => {
     await prisma.task.delete({
       where: { id: todoId },
     });
-    res.status(200).json({ message: "Failed to delete task" });
+    res.status(200).json({ message: "Task created successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to delete task" });
