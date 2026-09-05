@@ -4,18 +4,23 @@
   "packageManager": "pnpm@11.25.0",
 
   "scripts": {
-    "build": "turbo run build",
+    "build": "turbo run build:backend build:frontend",
+
     "build:backend": "tsc -p apps/backend/tsconfig.json",
+
     "build:frontend": "tsc -p apps/frontend/tsconfig.json && vite build --config apps/frontend/vite.config.ts",
 
     "dev": "turbo run dev:backend dev:frontend",
+
     "dev:backend": "nodemon --watch apps/backend/src --watch apps/backend/generated --ext ts --exec tsx apps/backend/src/server.ts",
+
     "dev:frontend": "vite --config apps/frontend/vite.config.ts",
 
-    "type-check": "turbo run typecheck",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
-    "typecheck:backend": "tsc --noEmit -p apps/backend/tsconfig.json",
-    "typecheck:frontend": "tsc --noEmit -p apps/frontend/tsconfig.json",
+    "type-check": "turbo run type-check:backend type-check:frontend",
+
+    "type-check:backend": "tsc --noEmit -p apps/backend/tsconfig.json",
+
+    "type-check:frontend": "tsc --noEmit -p apps/frontend/tsconfig.json",
 
     "seed": "tsx apps/backend/prisma/seed.ts"
   },
