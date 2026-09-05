@@ -29,7 +29,7 @@ async function connect() {
 connect();
 
 // To fetch all tasks in database
-app.get("/todos", async (req, res) => {
+app.get("/todos", async (_req, res) => {
   try {
     const tasks = await prisma.task.findMany({
       omit: { createdAt: true, updatedAt: true },
