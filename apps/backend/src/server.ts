@@ -3,7 +3,6 @@ import express from "express";
 import { PrismaClient } from "../generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import cors from "cors";
-import { Tag, Status, Priority } from "../generated/prisma/enums"
 
 const connectionString = `${process.env.DATABASE_URL}`;
 console.log(process.env.DATABASE_URL);
