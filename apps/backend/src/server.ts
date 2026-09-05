@@ -18,7 +18,7 @@ app.use(express.json());
 // }))
 app.use(cors({origin: "*"}));
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Todo App!");
 });
 
