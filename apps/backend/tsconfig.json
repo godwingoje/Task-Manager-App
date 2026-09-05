@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.json",
+
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["node"],
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+
+  "include": [
+    "src",
+    "prisma",
+    "generated"
+  ],
+
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

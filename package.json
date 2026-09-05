@@ -1,0 +1,58 @@
+{
+  "name": "task-manager-app",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+
+  "scripts": {
+    "build": "turbo run build",
+    "build:backend": "tsc -p apps/backend/tsconfig.json",
+    "build:frontend": "tsc -p apps/frontend/tsconfig.json && vite build --config apps/frontend/vite.config.ts",
+
+    "dev": "turbo run dev:backend dev:frontend",
+    "dev:backend": "nodemon --watch apps/backend/src --watch apps/backend/generated --ext ts --exec tsx apps/backend/src/server.ts",
+    "dev:frontend": "vite --config apps/frontend/vite.config.ts",
+
+    "type-check": "turbo run typecheck",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck:backend": "tsc --noEmit -p apps/backend/tsconfig.json",
+    "typecheck:frontend": "tsc --noEmit -p apps/frontend/tsconfig.json",
+
+    "seed": "tsx apps/backend/prisma/seed.ts"
+  },
+
+  "prisma": {
+    "seed": "tsx apps/backend/prisma/seed.ts"
+  },
+
+  "dependencies": {
+    "@fontsource/raleway": "^5.2.5",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@tailwindcss/vite": "^4.3.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.21.0",
+    "tailwindcss": "^4.3.1"
+  },
+
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.19.43",
+    "@types/pg": "^8.20.0",
+    "nodemon": "^3.1.14",
+    "prisma": "^7.8.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.22.4",
+    "turbo": "^2.5.6",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.12"
+  },
+
+  "allowScripts": {
+    "@prisma/engines@7.10.0": true,
+    "esbuild@0.28.2": true,
+    "prisma@7.10.0": true
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build:backend": {
+      "outputs": ["apps/backend/dist/**"]
+    },
+    "build:frontend": {
+      "outputs": ["apps/frontend/dist/**"]
+    },
+    "dev:backend": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:frontend": {
+      "cache": false,
+      "persistent": true
+    },
+    "type-check:backend": {
+      "cache": false
+    },
+    "type-check:frontend": {
+      "cache": false
+    }
+  }
+}
