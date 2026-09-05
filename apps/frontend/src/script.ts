@@ -3,6 +3,8 @@ import "@fontsource/raleway/500.css";
 import "@fontsource/raleway/600.css";
 import "@fontsource/raleway/700.css";
 import type { Task } from "./types/tasks";
+console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
+console.log("ALL ENV:", import.meta.env);
 const API_URL = import.meta.env.VITE_API_URL
 const DESCRIPTION_PREVIEW_LENGTH = 100;
 const expandedTaskIds: number[] = [];
